@@ -1,0 +1,44 @@
+{% extends "auctions/layout.html" %}
+{% block watchlist %}
+<a class="nav-link" href="{% url 'watchlist' %}">Watchlist
+    {% if watchCounter != 0 %}
+    <span class="badge badge-dark">{{watchCounter}}</span>
+    {% endif %}
+</a>
+{% endblock %}
+{% block body %}
+<div class="section-heading p-4 mb-3">
+    <h1>Active Listings</h1>
+</div>
+<div class="container-fluid p-0">
+    <div class="row row-cols-1 row-cols-md-3">
+        {% for listing in activeListings %}
+        <div class="col mb-3">
+            <div class="card h-100">
+                <a href="{% url "listing" listing.listingUser.username listing.id  %}"><img
+                        src="{{listing.imageUrl}}" class="card-img" alt="Item Image"
+                        style="max-height:350px;"></a>
+                <div class="card-body">
+                    <h4 class="card-title">{{listing.title}}</h4>
+                    <p class="card-text">{{listing.description}}</p>
+                    <p class="card-text">Current Price:
+                        ${{listing.currentBid.value}}</p>
+                    <p class="card-text">Start Price: ${{listing.startBid}}</p>
+                </div>
+                <div class="card-footer text-muted">
+                    Created at: {{listing.created}}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col mb-3 h-100">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">No Active Listings Right now!</h3>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

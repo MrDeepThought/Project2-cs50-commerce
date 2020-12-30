@@ -1,0 +1,31 @@
+body {
+    padding: 10px;
+}
+
+.section-heading h1 {
+    color      : #0f3365;
+    font-family: sans-serif;
+}
+
+.section-heading {
+    background-color: #a1d9eb;
+}
+
+.listing-image {
+    width     : 100%;
+    object-fit: fill;
+    height    : 450px;
+}
+
+.listing-info {
+    background-color: #b9f4c4;
+}
+
+.comments-container {
+    background-color: #d1e5ed;
+}
+
+.create-form {
+    background-color: #d1e5ed;
+    padding         : 10px;
+}

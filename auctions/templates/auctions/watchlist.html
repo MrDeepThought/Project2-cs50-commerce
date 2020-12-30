@@ -1,0 +1,49 @@
+{% extends "auctions/layout.html" %}
+{% block watchlist %}
+<a class="nav-link" href="{% url 'watchlist' %}">Watchlist
+    {% if watchCounter != 0 %}
+    <span class="badge badge-dark">{{watchCounter}}</span>
+    {% endif %}
+</a>
+{% endblock %}
+{% block body %}
+<div class="p-4 mb-3 section-heading">
+    <h1>Watchlist</h1>
+</div>
+<div class="container-fluid p-0">
+    <div class="row row-cols-1 row-cols-md-3">
+        {% for listing in listings %}
+        <div class="col mb-3">
+            <div class="card h-100">
+                <a href="{% url "listing" listing.listingUser.username listing.id  %}"><img
+                        src="{{listing.imageUrl}}" class="card-img-top" alt="Item Image"
+                        style="max-height:350px;"></a>
+                <div class=" card-body">
+                    <h4 class="card-title">{{listing.title}}</h4>
+                    <p class="card-text">{{listing.description}}</p>
+                    <p class="card-text">Current Price: ${{listing.currentBid.value}}</p>
+                    <p class="card-text">Start Price: ${{listing.startBid}}</p>
+                    <p><small class="text-muted">Created at: {{listing.created}}</small>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <form class="" action="{% url "watchlist" %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="listingId" value="{{listing.id}}">
+                        <input class="btn btn-danger" type="submit" value="Remove">
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4 class="card-title">No Listings in your Watchlist!</h3>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

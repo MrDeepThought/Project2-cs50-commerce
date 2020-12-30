@@ -1,0 +1,20 @@
+{% extends "auctions/layout.html" %}
+{% block watchlist %}
+<a class="nav-link" href="{% url 'watchlist' %}">Watchlist
+    {% if watchCounter != 0 %}
+    <span class="badge badge-dark">{{watchCounter}}</span>
+    {% endif %}
+</a>
+{% endblock %}
+{% block body %}
+<div class="section-heading p-4 mb-3">
+    <h1>categories</h1>
+</div>
+<ul>
+    {% for category in categories %}
+    <li><a href="{% url "categoryListings" category.name %}">{{category.name}}</a></li>
+    {% empty %}
+    <li><strong>No Categories</strong></li>
+    {% endfor %}
+</ul>
+{% endblock %}

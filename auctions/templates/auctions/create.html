@@ -1,0 +1,23 @@
+{% extends "auctions/layout.html" %}
+{% block watchlist %}
+<a class="nav-link" href="{% url 'watchlist' %}">Watchlist
+    {% if watchCounter != 0 %}
+    <span class="badge badge-dark">{{watchCounter}}</span>
+    {% endif %}
+</a>
+{% endblock %}
+{% block body %}
+<div class="section-heading p-4 mb-3">
+    <h1>Create Listing</h1>
+</div>
+<form class="create-form" action="{% url 'create' request.user.username %}" method="post">
+    {% csrf_token %}
+    {% for field,label in form %}
+    <div class="form-group">
+        <label for="{{field.id_for_label}}"><strong>{{label}}</strong></label>
+        {{field}}
+    </div>
+    {% endfor %}
+    <input type="submit" value="Create">
+</form>
+{% endblock %}

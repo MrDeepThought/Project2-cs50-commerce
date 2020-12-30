@@ -1,0 +1,152 @@
+{% extends "auctions/layout.html" %}
+{% block watchlist %}
+<a class="nav-link" href="{% url 'watchlist' %}">Watchlist
+    {% if watchCounter != 0 %}
+    <span class="badge badge-dark">{{watchCounter}}</span>
+    {% endif %}
+</a>
+{% endblock %}
+{% block body %}
+<div class="container-fluid">
+    <div class="row section-heading p-4">
+        <div class="col">
+            <h1>{{listing.title}}</h1>
+        </div>
+    </div>
+    <div class="row message mt-3 mb-3">
+        {% if message == "success" %}
+        <div class="alert alert-success" role="alert">
+            You've successfully placed the Bid!
+        </div>
+        {% elif message == "fail" %}
+        <div class="alert alert-danger" role="alert">
+            The Bid Value should greater than the current price.
+        </div>
+        {% endif %}
+    </div>
+    <div class="row listing-info-container mt-2 mb-2">
+        <div class="col-5 p-0">
+            <img class="listing-image" src="{{listing.imageUrl}}" alt="Item Image">
+        </div>
+        <div class="col-7 listing-info p-2">
+            <p class="font-weight-bold font-italic" style="font-size:18px;">
+                {{listing.description}}
+            </p>
+            <p><strong>Current Price: ${{listing.currentBid.value}}</strong></p>
+            <p><strong>Start Price: ${{listing.startBid}}</strong></p>
+            <p class="font-weight-bold">Listed by: {{listing.listingUser.firstName}}
+                {{listing.listingUser.lastName}}</p>
+            <p class="font-weight-bold">categories:
+                {% for category in categories %}
+                <a class="btn btn-secondary"
+                    href="{% url "categoryListings" category.name %}"
+                    role="button">{{category.name}}</a>
+                {% empty %}
+                <strong>No Category(s) Applied.</strong>
+                {% endfor %}
+            </p>
+            <div class="bid-box">
+                {% if listing.active %}
+                {% if listing.listingUser.username != request.user.username %}
+                <form style="display:inline-block;"
+                    action="{% url "listing" request.user.username listing.id %}"
+                    method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="bid">
+                    <label for="bidVal" class="font-weight-bold">{{listing.numbid}} Bid(s)
+                        so
+                        Far,
+                        {% if listing.currentBid.user.username == request.user.username %}
+                        Your Bid is the Current Bid!
+                        {% else %}
+                        {{listing.currentBid.user.firstName}}
+                        {{listing.currentBid.user.lastName}} has the Current Bid!
+                        {% endif %}
+                    </label>
+                    <input type="number" name="bidVal">
+                    <input class="btn btn-primary" type="submit" value="Bid">
+                </form>
+                {% else %}
+                <form action="{% url "listing" request.user.username listing.id %}"
+                    method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="close">
+                    <label for="close-btn" class="font-weight-bold">Close Your
+                        listing:</label>
+                    <input class="btn btn-success" type="submit" name="close-btn"
+                        value="Close">
+                </form>
+                {% endif %}
+                <form style="display:inline-block;"
+                    action="{% url "listing" request.user.username listing.id %}"
+                    method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="watchlist">
+                    {% if inWatchlist %}
+                    <input class="btn btn-info" type="submit" value="Watchlist" disabled>
+                    {% else %}
+                    <input class="btn btn-info" type="submit" value="Watchlist">
+                    {% endif %}
+                </form>
+                {% else %}
+                <div class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">Listing Closed!</h4>
+                    <p>
+                        {% if request.user.username == listing.winnerUser.username %}
+                        Congratulations! You are the winner of {{listing.title}}
+                        <br>
+                        {% elif request.user.username == listing.listingUser.username %}
+                        Your Listing : {{listing.title}} is won by
+                        {{listing.winnerUser.firstName}} {{listing.winnerUser.lastName}}!
+                        <br>
+                        {% else %}
+                        Sorry! {{listing.winnerUser.firstName}}
+                        {{listing.winnerUser.lastName}} is the Winner of
+                        {{listing.title}}<br>
+                        {% endif %}
+                        Winnig Bid Price : ${{listing.currentBid.value}}<br>
+                        Starting Bid Price : ${{listing.startBid}}<br>
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="row comments-container display-flex flex-column p-2">
+        <h2>Comment(s)</h2>
+        {% for comment in comments %}
+        <div class="card text-white bg-primary mt-2">
+            <div class="card-header">
+                <h4 class="card-title">{{comment.author.firstName}}
+                    {{comment.author.lastName}}</h4>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{comment.description}}</p>
+            </div>
+            <div class="card-footer">
+                <p><small class="text-white">Created at:
+                        {{comment.timestamp}}</small>
+            </div>
+        </div>
+        {% empty %}
+        <div class="card text-white bg-primary mt-2">
+            <div class="card-body">
+                <p class="card-text">No Comments!</p>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="card mt-2 p-2">
+            <h4 class="card-title">Post Your Views For This Listing</h4>
+            <form class="" action="{% url "listing" request.user.username listing.id %}"
+                method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="comment">
+                <textarea name="description" rows="8" cols="200"
+                    placeholder="Add Your Comment" required></textarea>
+                <br>
+                <input class="btn btn-primary" type="submit" value="Post">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
